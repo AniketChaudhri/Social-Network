@@ -1,4 +1,5 @@
 const express = require('express');
+const { v1: uuidv1 } = require('uuid');
 const app = express();
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
@@ -16,16 +17,10 @@ app.use('/', postRoutes);
 
 dotenv.config()
 
-//db connection
-mongoose.connect(
-    process.env.MONGO_URI,
-    { useNewUrlParser: true }
-)
+mongoose.connect(process.env.MONGO_URI,{ useNewUrlParser: true })
     .then(() => console.log('DB Connected'))
 
-mongoose.connection.on('error', err => {
-    console.log(`DB connection error: ${err.message}`)
-});
+mongoose.connection.on('error', err => console.log(`DB connection error: ${err.message}`));
 
 
 app.listen(port, () => {console.log(`Listening on port ${port}`)});
