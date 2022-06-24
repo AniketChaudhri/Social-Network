@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
-let uuidv1 = require('uuidv1');
-const { createHmac } = await import('node:crypto');
+const { v4: uuidv4 } = require('uuid');
+const crypto = require("crypto");
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -30,7 +30,7 @@ userSchema.virtual('password')
     // create temporary variable
     this._password = password;
     // generate timestamp
-    this.salt = uuidv1()
+    this.salt = uuidv4()
     // encrypt password
     this.hashed_password = this.encryptPassword(password);
 })
@@ -42,7 +42,7 @@ userSchema.methods = {
     encryptPassword: function(password){
         if (!password) return "";
         try{
-            return createHmac('sha256', this.salt)
+            return crypto.createHmac('sha256', this.salt)
                 .update(password)
                 .digest('hex');
         }

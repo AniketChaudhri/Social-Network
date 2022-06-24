@@ -1,5 +1,4 @@
 const express = require('express');
-const { v1: uuidv1 } = require('uuid');
 const app = express();
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
@@ -7,12 +6,15 @@ const expressValidator = require('express-validator');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const postRoutes = require('./routes/posts');
+const authRoutes = require('./routes/auth');
 const port = process.env.PORT || 8080
 
 app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use(expressValidator())
+
 app.use('/', postRoutes);
+app.use('/', authRoutes);
 
 
 dotenv.config()
