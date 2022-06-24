@@ -10,13 +10,22 @@ const postRoutes = require('./routes/posts');
 const authRoutes = require('./routes/auth');
 const port = process.env.PORT || 8080
 
+app.use('/', postRoutes);
+app.use('/', authRoutes);
+
 app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(expressValidator())
+app.use(function (err, req, res, next) {
+    if (err.name === "UnauthorizedError") {
+        res.status(401).json({error: "Unauthorised!"});
+    } else {
+        next(err);
+    }
+});
 
-app.use('/', postRoutes);
-app.use('/', authRoutes);
+
 
 
 dotenv.config()
