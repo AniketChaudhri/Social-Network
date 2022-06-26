@@ -4,7 +4,7 @@ const fs = require('fs');
 const Post = require("../model/posts")
 let uuidv1 = require('uuidv1')
 
-exports.postById = (req, res) => {
+exports.postById = (req, res, next, id) => {
     Post.findById(id)
         .populate("postedBy", "_id name")
         .exec((err, post) => {
@@ -17,17 +17,17 @@ exports.postById = (req, res) => {
             next();
         });
 }
-                    
+
 
 exports.getPosts = (req, res) => {
     const posts = Post.find()
-    .populate("postedBy", "_id name")
-    .select("_id title body")
-    .then(posts => {
-        res.status(200).json({posts: posts})
+        .populate("postedBy", "_id name")
+        .select("_id title body")
+        .then(posts => {
+            res.status(200).json({ posts: posts })
 
-    })
-    .catch(err => console.log(err))
+        })
+        .catch(err => console.log(err))
 }
 
 exports.createPost = (req, res) => {
@@ -61,16 +61,38 @@ exports.createPost = (req, res) => {
 }
 
 exports.postsByUser = (req, res) => {
-    Post.find({postedBy: req.profile._id})
-    .populate("postedBy", "_id name")
-    .select("_id title body")
-    .exec((err, posts) => {
+    Post.find({ postedBy: req.profile._id })
+        .populate("postedBy", "_id name")
+        .select("_id title body")
+        .exec((err, posts) => {
+            if (err) {
+                return res.status(400).json({
+                    error: err
+                })
+            }
+            res.json(posts);
+        }
+        )
+}
+
+exports.isPoster = (req, res, next) => {
+    let isPoster = req.post && req.auth && req.post.postedBy._id == req.auth._id;
+    if (!isPoster) {
+        return res.status(403).json({
+            error: "User is not authorized"
+        })
+    }
+    next();
+}
+
+exports.deletePost = (req, res) => {
+    let post = req.post;
+    post.remove((err, post) => {
         if (err) {
             return res.status(400).json({
                 error: err
             })
         }
-        res.json(posts);
-    }
-    )
+        res.json({ message: "Post deleted successfully" });
+    })
 }
