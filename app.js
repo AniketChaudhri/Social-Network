@@ -8,6 +8,7 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const postRoutes = require('./routes/posts');
 const authRoutes = require('./routes/auth');
+const userRoutes = require('./routes/user');
 const port = process.env.PORT || 8080
 
 app.use(bodyParser.json());
@@ -18,6 +19,7 @@ app.use(expressValidator())
 
 app.use('/', postRoutes);
 app.use('/', authRoutes);
+app.use('/', userRoutes);
 
 
 app.use(function (err, req, res, next) {
