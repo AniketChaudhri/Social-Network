@@ -1,3 +1,4 @@
+const _ = require("lodash");
 const User = require("../model/user")
 
 exports.userById = (req, res, next, id) => {
@@ -38,3 +39,20 @@ exports.getUser = (req, res) => {
     req.profile.salt = undefined;
     return res.json(req.profile);
 }
+
+exports.updateUser = (req, res) => {
+    let user = req.profile;
+    user = _.extend(user, req.body);
+    user.updated = Date.now();
+    user.save((err, result) => {
+        if (err) {
+            return res.status(400).json({
+                error: err
+            })
+        }
+        user.hash_password = undefined;
+        user.salt = undefined;
+        res.json(result);
+    })
+}
+
