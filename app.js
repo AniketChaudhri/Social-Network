@@ -6,10 +6,24 @@ var cookieParser = require('cookie-parser');
 const expressValidator = require('express-validator');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+const fs = require('fs');
 const postRoutes = require('./routes/posts');
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/user');
 const port = process.env.PORT || 8080
+
+// api docs
+app.use('/', (req, res) => {
+    fs.readFile('docs/apiDocs.json', (err, data)=>{
+        if (err) {
+            res.status(400).json({
+                error: err
+            })
+        }
+        res.json(JSON.parse(data))
+        
+    })
+})
 
 app.use(bodyParser.json());
 app.use(express.json());
