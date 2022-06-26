@@ -1,5 +1,6 @@
 const formidable = require('formidable');
 const fs = require('fs');
+const _ = require('lodash');
 
 const Post = require("../model/posts")
 let uuidv1 = require('uuidv1')
@@ -84,6 +85,21 @@ exports.isPoster = (req, res, next) => {
     }
     next();
 }
+
+exports.updatePost = (req, res) => {
+    let post = req.post;
+    post = _.extend(post, req.body);
+    post.updated = Date.now();
+    post.save((err, result) => {
+        if (err) {
+            return res.status(400).json({
+                error: err
+            })
+        }
+        res.json(result);
+    })
+}
+
 
 exports.deletePost = (req, res) => {
     let post = req.post;
