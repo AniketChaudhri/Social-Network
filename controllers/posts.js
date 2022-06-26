@@ -4,6 +4,20 @@ const fs = require('fs');
 const Post = require("../model/posts")
 let uuidv1 = require('uuidv1')
 
+exports.postById = (req, res) => {
+    Post.findById(id)
+        .populate("postedBy", "_id name")
+        .exec((err, post) => {
+            if (err || !post) {
+                return res.status(400).json({
+                    error: err
+                })
+            }
+            req.post = post;
+            next();
+        });
+}
+                    
 
 exports.getPosts = (req, res) => {
     const posts = Post.find()
